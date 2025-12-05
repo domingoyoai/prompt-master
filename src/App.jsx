@@ -105,7 +105,7 @@ const FeatureTag = ({ label, active, onClick }) => (
 // --- 主應用程式元件 ---
 const App = () => {
   // --- 狀態管理 ---
-  const [apiKey, setApiKey] = useState("AIzaSyDMdJO1Y4brrSGEZ_mIUYb_vJez4jUOnDI");
+  const [apiKey, setApiKey] = useState("");
   const [model, setModel] = useState('flux');
   const [inputMode, setInputMode] = useState('text');
   const [userQuery, setUserQuery] = useState('');
