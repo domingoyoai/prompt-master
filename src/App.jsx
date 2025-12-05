@@ -105,7 +105,14 @@ const FeatureTag = ({ label, active, onClick }) => (
 // --- 主應用程式元件 ---
 const App = () => {
   // --- 狀態管理 ---
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini_api_key") || "");
+
+  const handleApiKeyChange = (e) => {
+    const newKey = e.target.value.trim();
+    setApiKey(newKey);
+    localStorage.setItem("gemini_api_key", newKey);
+    setErrorMsg('');
+  };
   const [model, setModel] = useState('flux');
   const [inputMode, setInputMode] = useState('text');
   const [userQuery, setUserQuery] = useState('');
@@ -373,7 +380,7 @@ const App = () => {
             {errorMsg && (<div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-2 text-red-200 text-sm"><AlertCircle className="w-5 h-5 shrink-0" /><p>{errorMsg}</p></div>)}
             <div className="mb-4">
               <label className="block text-sm font-medium text-slate-400 mb-2">Google Gemini API Key</label>
-              <input type="text" value={apiKey} onChange={(e) => { setApiKey(e.target.value.trim()); setErrorMsg(''); }} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-white font-mono text-sm" />
+              <input type="text" value={apiKey} onChange={handleApiKeyChange} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-white font-mono text-sm" />
             </div>
             <button onClick={() => setShowSettings(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors">儲存並關閉</button>
           </div>
