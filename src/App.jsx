@@ -124,13 +124,13 @@ const App = () => {
   const pdfInputRef = useRef(null);
 
   const tags = [
-    { id: '35mm', label: '35mm Lens (Humanist)' },
-    { id: '85mm', label: '85mm Lens (Portrait)' },
-    { id: 'dutch', label: 'Dutch Angle' },
-    { id: 'rembrandt', label: 'Rembrandt Light' },
-    { id: 'cyberpunk', label: 'Cyberpunk' },
-    { id: 'film_grain', label: 'Film Grain (Realism)' },
-    { id: 'imperfection', label: 'Add Imperfections' },
+    { id: '35mm', label: '35mm 鏡頭 (人文)' },
+    { id: '85mm', label: '85mm 鏡頭 (人像)' },
+    { id: 'dutch', label: '荷蘭式角度' },
+    { id: 'rembrandt', label: '林布蘭光' },
+    { id: 'cyberpunk', label: '賽博龐克' },
+    { id: 'film_grain', label: '底片顆粒 (真實感)' },
+    { id: 'imperfection', label: '增加瑕疵' },
   ];
 
   const toggleTag = (id) => {
@@ -369,13 +369,13 @@ const App = () => {
       {showSettings && (
         <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><Settings className="w-5 h-5" /> Settings</h3>
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><Settings className="w-5 h-5" /> 設定</h3>
             {errorMsg && (<div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-2 text-red-200 text-sm"><AlertCircle className="w-5 h-5 shrink-0" /><p>{errorMsg}</p></div>)}
             <div className="mb-4">
               <label className="block text-sm font-medium text-slate-400 mb-2">Google Gemini API Key</label>
               <input type="text" value={apiKey} onChange={(e) => { setApiKey(e.target.value.trim()); setErrorMsg(''); }} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-white font-mono text-sm" />
             </div>
-            <button onClick={() => setShowSettings(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors">Save & Close</button>
+            <button onClick={() => setShowSettings(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors">儲存並關閉</button>
           </div>
         </div>
       )}
@@ -384,15 +384,15 @@ const App = () => {
         <div className="fixed inset-0 bg-black/80 z-[90] flex justify-end">
           <div className="w-full max-w-2xl bg-slate-900 h-full shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
             <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-              <h3 className="text-xl font-bold flex items-center gap-2 text-emerald-400"><BookOpen className="w-5 h-5" /> AI Brain (Knowledge Base)</h3>
+              <h3 className="text-xl font-bold flex items-center gap-2 text-emerald-400"><BookOpen className="w-5 h-5" /> AI 大腦 (知識庫)</h3>
               <button onClick={() => setShowKnowledge(false)} className="text-slate-400 hover:text-white"><Maximize2 size={20} /></button>
             </div>
             <div className="px-6 py-4 bg-slate-900 border-b border-slate-800">
-              <p className="text-xs text-slate-400 mb-3">Upload a PDF to teach the AI new tricks.</p>
+              <p className="text-xs text-slate-400 mb-3">上傳 PDF 以教導 AI 新技巧。</p>
               <div className="flex gap-2">
                 <button onClick={() => pdfInputRef.current?.click()} disabled={isLearning} className="flex-1 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/50 text-emerald-400 text-sm py-2 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
                   {isLearning ? <Loader2 className="animate-spin w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                  {isLearning ? "Learning..." : "Upload PDF to Learn"}
+                  {isLearning ? "學習中..." : "上傳 PDF 進行學習"}
                 </button>
                 <input type="file" ref={pdfInputRef} className="hidden" accept="application/pdf" onChange={handlePdfUpload} />
               </div>
@@ -406,22 +406,22 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         <section className="mb-10">
-          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Step 1: Select Target Platform</h2>
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span> 第一步：選擇目標模型</h2>
           <div className="flex flex-col sm:flex-row gap-4">
-            <ModelCard id="flux" name="Flux.2" icon={Aperture} description="Structural, JSON-based. The Architect." active={model === 'flux'} onClick={setModel} />
-            <ModelCard id="gemini" name="Nano Banana" icon={Zap} description="Logical, Reasoning. The Logician." active={model === 'gemini'} onClick={setModel} />
-            <ModelCard id="seedream" name="Seedream" icon={Camera} description="Commercial, Reference-heavy. The Director." active={model === 'seedream'} onClick={setModel} />
-            <ModelCard id="video" name="Video Model" icon={Film} description="Physics, Time. The Cinematographer." active={model === 'video'} onClick={setModel} />
+            <ModelCard id="flux" name="Flux.2" icon={Aperture} description="結構化，JSON 格式。架構師。" active={model === 'flux'} onClick={setModel} />
+            <ModelCard id="gemini" name="Nano Banana" icon={Zap} description="邏輯，推理。邏輯學家。" active={model === 'gemini'} onClick={setModel} />
+            <ModelCard id="seedream" name="Seedream" icon={Camera} description="商業，參考圖優先。導演。" active={model === 'seedream'} onClick={setModel} />
+            <ModelCard id="video" name="Video Model" icon={Film} description="物理，時間。攝影師。" active={model === 'video'} onClick={setModel} />
           </div>
         </section>
 
-        <section className="flex flex-col gap-8 mb-10 max-w-4xl mx-auto">
+        <section className="flex flex-col gap-8 mb-10 w-full">
           <div className="w-full space-y-6">
             <div className="flex justify-between items-end">
-              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-purple-500"></span> Step 2: Your Vision</h2>
+              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-purple-500"></span> 第二步：您的構想</h2>
               <div className="flex gap-2">
-                <button onClick={() => setInputMode('text')} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'text' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>Text Mode</button>
-                <button onClick={() => setInputMode('image')} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'image' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>Image Reverse</button>
+                <button onClick={() => setInputMode('text')} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'text' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>文字模式</button>
+                <button onClick={() => setInputMode('image')} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'image' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>圖片反推</button>
               </div>
             </div>
 
@@ -433,19 +433,19 @@ const App = () => {
                     <div className="relative">
                       <img src={uploadedImage.preview} alt="Upload" className="max-h-64 mx-auto rounded-lg shadow-lg" />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg">
-                        <p className="text-white font-medium flex items-center gap-2"><RefreshCcw size={16} /> Change Image</p>
+                        <p className="text-white font-medium flex items-center gap-2"><RefreshCcw size={16} /> 更換圖片</p>
                       </div>
                     </div>
                   ) : (
                     <div className="py-8">
                       <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-400"><Upload size={32} /></div>
-                      <h4 className="text-lg font-medium text-slate-300">Drop an image here</h4>
-                      <p className="text-slate-500 mt-2 text-sm">AI will analyze lighting, angle, and style.</p>
+                      <h4 className="text-lg font-medium text-slate-300">將圖片拖放到這裡</h4>
+                      <p className="text-slate-500 mt-2 text-sm">AI 將分析光線、角度和風格。</p>
                     </div>
                   )}
                 </div>
               ) : (
-                <textarea value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="Describe your idea in natural language..." className="w-full bg-slate-900 text-slate-200 p-6 min-h-[200px] outline-none resize-none text-lg placeholder:text-slate-600 rounded-xl" />
+                <textarea value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="請用自然語言描述您的想法..." className="w-full bg-slate-900 text-slate-200 p-6 min-h-[200px] outline-none resize-none text-lg placeholder:text-slate-600 rounded-xl" />
               )}
               <div className="flex justify-between items-center bg-slate-950/50 p-3 rounded-b-xl border-t border-slate-800">
                 <div className="flex gap-2 overflow-x-auto no-scrollbar">
@@ -454,14 +454,14 @@ const App = () => {
                   ))}
                 </div>
                 <button onClick={generatePrompt} disabled={isLoading} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] justify-center shadow-lg shadow-blue-900/20">
-                  {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <>Generate <ChevronRight size={16} /></>}
+                  {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <>生成 <ChevronRight size={16} /></>}
                 </button>
               </div>
             </div>
           </div>
 
           <div className="w-full">
-            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Generated Prompt</h2>
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> 生成的提示詞</h2>
             <div className={`h-full min-h-[200px] bg-slate-900 rounded-2xl border border-slate-800 p-6 relative flex flex-col ${isLoading ? 'animate-pulse' : ''} ${errorMsg && !showSettings ? 'border-red-500/50' : ''}`}>
               {generatedPrompt ? (
                 <>
@@ -472,20 +472,20 @@ const App = () => {
                   </div>
                   <div className="pt-4 border-t border-slate-800 mt-4 flex justify-end">
                     <button onClick={handleCopy} className={`flex items-center gap-2 text-sm transition-colors ${copied ? 'text-emerald-400' : 'text-blue-400 hover:text-blue-300'}`}>
-                      {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy to Clipboard</>}
+                      {copied ? <><Check size={16} /> 已複製！</> : <><Copy size={16} /> 複製到剪貼簿</>}
                     </button>
                   </div>
                 </>
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center text-slate-600 opacity-50 py-12">
                   <Sparkles size={48} className="mb-4" />
-                  <p className="text-sm text-center">{errorMsg ? <span className="text-red-400">Error encountered. Check Settings.</span> : "AI Output will appear here"}</p>
+                  <p className="text-sm text-center">{errorMsg ? <span className="text-red-400">發生錯誤。請檢查設定。</span> : "AI 輸出將顯示於此"}</p>
                 </div>
               )}
             </div>
           </div>
         </section>
-        <footer className="border-t border-slate-800 py-8 text-center text-slate-600 text-xs"><p>Powered by Google Gemini 2.5 Flash • Optimized for Flux.2, Seedream & Runway</p></footer>
+        <footer className="border-t border-slate-800 py-8 text-center text-slate-600 text-xs"><p>由 Google Gemini 2.5 Flash 驅動 • 針對 Flux.2, Seedream & Runway 優化</p></footer>
       </main>
       <style>{`.custom-scrollbar::-webkit-scrollbar {width: 6px;} .custom-scrollbar::-webkit-scrollbar-track {background: rgba(30, 41, 59, 0.5);} .custom-scrollbar::-webkit-scrollbar-thumb {background: rgba(71, 85, 105, 0.8); border-radius: 4px;} .custom-scrollbar::-webkit-scrollbar-thumb:hover {background: rgba(100, 116, 139, 1);}`}</style>
     </div>
