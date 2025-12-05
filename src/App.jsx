@@ -118,7 +118,18 @@ const App = () => {
   const [userQuery, setUserQuery] = useState('');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [knowledgeBase, setKnowledgeBase] = useState(INITIAL_KNOWLEDGE_BASE);
+  const [knowledgeBase, setKnowledgeBase] = useState(() => localStorage.getItem("gemini_knowledge_base") || INITIAL_KNOWLEDGE_BASE);
+
+  // Persist knowledge base
+  React.useEffect(() => {
+    localStorage.setItem("gemini_knowledge_base", knowledgeBase);
+  }, [knowledgeBase]);
+
+  const handleResetKnowledge = () => {
+    if (confirm("Are you sure you want to reset the knowledge base to default? All learned information will be lost.")) {
+      setKnowledgeBase(INITIAL_KNOWLEDGE_BASE);
+    }
+  };
   const [showKnowledge, setShowKnowledge] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -400,6 +411,9 @@ const App = () => {
                 <button onClick={() => pdfInputRef.current?.click()} disabled={isLearning} className="flex-1 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/50 text-emerald-400 text-sm py-2 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
                   {isLearning ? <Loader2 className="animate-spin w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   {isLearning ? "學習中..." : "上傳 PDF 進行學習"}
+                </button>
+                <button onClick={handleResetKnowledge} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm rounded-lg border border-red-500/30 transition-colors" title="重置為預設知識庫">
+                  <RefreshCcw className="w-4 h-4" />
                 </button>
                 <input type="file" ref={pdfInputRef} className="hidden" accept="application/pdf" onChange={handlePdfUpload} />
               </div>
