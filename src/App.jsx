@@ -73,7 +73,7 @@ const ModelCard = ({ id, name, icon, description, active, onClick }) => {
       onClick={() => onClick(id)}
       className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-300 w-full sm:w-1/4 ${active
         ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.5)]'
-        : 'border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800'
+        : 'border-slate-700 bg-[rgba(30,41,59,0.5)] hover:border-slate-500 hover:bg-[#1e293b]'
         }`}
     >
       <div className={`p-3 rounded-full mb-3 ${active ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-300'}`}>
@@ -95,7 +95,7 @@ const FeatureTag = ({ label, active, onClick }) => (
     onClick={onClick}
     className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${active
       ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-      : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
+      : 'bg-[#1e293b] border-slate-700 text-slate-400 hover:border-slate-500'
       }`}
   >
     {label}
@@ -353,7 +353,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30">
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-slate-800 bg-[rgba(15,23,42,0.5)] backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-tr from-blue-600 to-purple-600 p-2 rounded-lg shadow-lg">
@@ -382,7 +382,7 @@ const App = () => {
               <label className="block text-sm font-medium text-slate-400 mb-2">Google Gemini API Key</label>
               <input type="text" value={apiKey} onChange={handleApiKeyChange} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-white font-mono text-sm" />
             </div>
-            <button onClick={() => setShowSettings(false)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors">儲存並關閉</button>
+            <button onClick={() => setShowSettings(false)} className="w-full bg-[#2563eb] hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors">儲存並關閉</button>
           </div>
         </div>
       )}
@@ -432,7 +432,7 @@ const App = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-1 relative overflow-hidden group focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+            <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-1 relative overflow-hidden group focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
               {inputMode === 'image' ? (
                 <div className="p-8 text-center border-2 border-dashed border-slate-700 rounded-xl hover:bg-slate-800/50 transition-colors relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                   <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
@@ -452,15 +452,15 @@ const App = () => {
                   )}
                 </div>
               ) : (
-                <textarea value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="請用自然語言描述您的想法..." className="w-full bg-slate-900 text-slate-200 p-6 min-h-[200px] outline-none resize-none text-lg placeholder:text-slate-600 rounded-xl" />
+                <textarea value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="請用自然語言描述您的想法..." className="w-full bg-[#0f172a] text-slate-200 p-6 min-h-[200px] outline-none resize-none text-lg placeholder:text-slate-600 rounded-xl" />
               )}
-              <div className="flex justify-between items-center bg-slate-950/50 p-3 rounded-b-xl border-t border-slate-800">
+              <div className="flex justify-between items-center bg-[rgba(2,6,23,0.5)] p-3 rounded-b-xl border-t border-slate-800">
                 <div className="flex gap-2 overflow-x-auto no-scrollbar">
                   {tags.map(tag => (
                     <FeatureTag key={tag.id} label={tag.label} active={selectedTags.includes(tag.id)} onClick={() => toggleTag(tag.id)} />
                   ))}
                 </div>
-                <button onClick={generatePrompt} disabled={isLoading} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] justify-center shadow-lg shadow-blue-900/20">
+                <button onClick={generatePrompt} disabled={isLoading} className="bg-[#2563eb] hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] justify-center shadow-lg shadow-blue-900/20">
                   {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <>生成 <ChevronRight size={16} /></>}
                 </button>
               </div>
@@ -469,7 +469,7 @@ const App = () => {
 
           <div className="w-full">
             <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> 生成的提示詞</h2>
-            <div className={`h-full min-h-[200px] bg-slate-900 rounded-2xl border border-slate-800 p-6 relative flex flex-col ${isLoading ? 'animate-pulse' : ''} ${errorMsg && !showSettings ? 'border-red-500/50' : ''}`}>
+            <div className={`h-full min-h-[200px] bg-[#0f172a] rounded-2xl border border-slate-800 p-6 relative flex flex-col ${isLoading ? 'animate-pulse' : ''} ${errorMsg && !showSettings ? 'border-red-500/50' : ''}`}>
               {generatedPrompt ? (
                 <>
                   <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
