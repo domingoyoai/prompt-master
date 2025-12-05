@@ -72,8 +72,8 @@ const ModelCard = ({ id, name, icon, description, active, onClick }) => {
     <button
       onClick={() => onClick(id)}
       className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-300 w-full sm:w-1/4 ${active
-          ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.5)]'
-          : 'border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800'
+        ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.5)]'
+        : 'border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800'
         }`}
     >
       <div className={`p-3 rounded-full mb-3 ${active ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-300'}`}>
@@ -94,8 +94,8 @@ const FeatureTag = ({ label, active, onClick }) => (
   <button
     onClick={onClick}
     className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${active
-        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-        : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
+      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+      : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
       }`}
   >
     {label}
@@ -415,8 +415,8 @@ const App = () => {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-          <div className="lg:col-span-2 space-y-6">
+        <section className="flex flex-col gap-8 mb-10 max-w-4xl mx-auto">
+          <div className="w-full space-y-6">
             <div className="flex justify-between items-end">
               <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-purple-500"></span> Step 2: Your Vision</h2>
               <div className="flex gap-2">
@@ -460,9 +460,9 @@ const App = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="w-full">
             <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Generated Prompt</h2>
-            <div className={`h-full min-h-[300px] bg-slate-900 rounded-2xl border border-slate-800 p-6 relative flex flex-col ${isLoading ? 'animate-pulse' : ''} ${errorMsg && !showSettings ? 'border-red-500/50' : ''}`}>
+            <div className={`h-full min-h-[200px] bg-slate-900 rounded-2xl border border-slate-800 p-6 relative flex flex-col ${isLoading ? 'animate-pulse' : ''} ${errorMsg && !showSettings ? 'border-red-500/50' : ''}`}>
               {generatedPrompt ? (
                 <>
                   <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
@@ -477,7 +477,7 @@ const App = () => {
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-slate-600 opacity-50">
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-600 opacity-50 py-12">
                   <Sparkles size={48} className="mb-4" />
                   <p className="text-sm text-center">{errorMsg ? <span className="text-red-400">Error encountered. Check Settings.</span> : "AI Output will appear here"}</p>
                 </div>
