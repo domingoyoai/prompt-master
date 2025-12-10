@@ -93,6 +93,25 @@ const App = () => {
     localStorage.setItem("gemini_kb_versions", JSON.stringify(knowledgeVersions));
   }, [knowledgeVersions]);
 
+  // Handle Global Paste Event
+  useEffect(() => {
+    const handlePaste = (e) => {
+      const items = e.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          e.preventDefault();
+          const file = items[i].getAsFile();
+          if (file) {
+            processImageFile(file);
+          }
+          break;
+        }
+      }
+    };
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, []);
+
   const handleResetKnowledge = () => {
     if (confirm("Are you sure you want to reset the knowledge base to default? All learned information will be lost.")) {
       setKnowledgeBase(INITIAL_KNOWLEDGE_BASE);
