@@ -58,6 +58,7 @@ AI models tend to be "too perfect". You MUST inject "Disturbance Tokens" to achi
 ### C. SEEDREAM (Commercial / Asian Aesthetics)
 - **Focus:** Aesthetics, Reference-heavy, Commercial photography.
 - **Constraint:** **MAX 800 CHARACTERS**.
+- **Constraint:** **DO NOT use Midjourney parameters (e.g. --ar, --v, --s). Use natural language only.**
 - **Key:** High quality, "Masterpiece", "Best Quality". Describe the visual beauty directly.
 - **Preference:** Asian aesthetic standards (clean light, smooth skin) unless "Raw/Film" is specified.
 

@@ -329,6 +329,7 @@ const App = () => {
           
           GENERATION ACTION:
           - Convert this analysis into a highly optimized prompt specifically for the '${model.toUpperCase()}' model architecture.
+          - **CRITICAL:** Use ONLY the syntax/parameters valid for '${model.toUpperCase()}'. DO NOT use parameters from other models (e.g., do NOT use '--ar' or '--v' if the target is NOT Midjourney).
           - Incorporate these user constraints: "${userQuery || "No additional constraints"}"
           - MUST enforce these tags: ${selectedTags.map(id => tags.find(t => t.id === id)?.label || id).join(', ')}
           
@@ -358,6 +359,7 @@ const App = () => {
 
           PROCEDURE:
           - Internal Thinking: Briefly analyze what the user wants vs. what the model needs.
+          - **CRITICAL:** Use ONLY the syntax/parameters valid for '${model.toUpperCase()}'. DO NOT use parameters from other models (e.g., do NOT use '--ar' or '--v' if the target is NOT Midjourney).
           - Output: ONLY the Final Prompt block.
           
           OUTPUT RULES:
