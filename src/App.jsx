@@ -103,7 +103,6 @@ const App = () => {
   const [copied, setCopied] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isLearning, setIsLearning] = useState(false);
-  const [isLearning, setIsLearning] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -498,8 +497,8 @@ const App = () => {
               {inputMode === 'image' ? (
                 <div
                   className={`p-8 text-center border-2 border-dashed rounded-xl transition-all relative cursor-pointer ${isDragging
-                      ? 'border-blue-500 bg-blue-500/10 scale-[1.02]'
-                      : 'border-slate-700 hover:bg-slate-800/50'
+                    ? 'border-blue-500 bg-blue-500/10 scale-[1.02]'
+                    : 'border-slate-700 hover:bg-slate-800/50'
                     }`}
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={handleDragOver}
