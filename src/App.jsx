@@ -17,7 +17,10 @@ import {
   Check,
   Settings,
   AlertCircle,
-  Plus
+  AlertCircle,
+  Plus,
+  SlidersHorizontal,
+  Wand2
 } from 'lucide-react';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
@@ -52,9 +55,9 @@ const ModelCard = ({ id, name, icon, description, active, onClick }) => {
 const FeatureTag = ({ label, active, onClick }) => (
   <button
     onClick={onClick}
-    className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${active
-      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-      : 'bg-[#1e293b] border-slate-700 text-slate-400 hover:border-slate-500'
+    className={`px-4 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${active
+      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+      : 'bg-[#1e293b] border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'
       }`}
   >
     {label}
@@ -100,7 +103,9 @@ const App = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [copied, setCopied] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [isLearning, setIsLearning] = useState(false);
+  const [isTagsOpen, setIsTagsOpen] = useState(false);
 
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
@@ -482,15 +487,35 @@ const App = () => {
               ) : (
                 <textarea value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="請用自然語言描述您的想法..." className="w-full bg-[#0f172a] text-slate-200 p-6 min-h-[200px] outline-none resize-none text-lg placeholder:text-slate-600 rounded-xl" />
               )}
-              <div className="flex justify-between items-center bg-[rgba(2,6,23,0.5)] p-3 rounded-b-xl border-t border-slate-800">
-                <div className="flex gap-2 overflow-x-auto no-scrollbar">
-                  {tags.map(tag => (
-                    <FeatureTag key={tag.id} label={tag.label} active={selectedTags.includes(tag.id)} onClick={() => toggleTag(tag.id)} />
-                  ))}
+              <div className="bg-[rgba(2,6,23,0.5)] p-4 rounded-b-xl border-t border-slate-800 flex flex-col gap-4">
+                <div className="flex justify-between items-center gap-4">
+                  <button
+                    onClick={() => setIsTagsOpen(!isTagsOpen)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 border ${isTagsOpen ? 'bg-slate-800 border-slate-600 text-white' : 'bg-transparent border-slate-700 text-slate-400 hover:border-slate-500'}`}
+                  >
+                    <SlidersHorizontal size={16} />
+                    {isTagsOpen ? '收起風格參數' : '設定風格參數 (Style Tags)'}
+                    {selectedTags.length > 0 && <span className="bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{selectedTags.length}</span>}
+                  </button>
+
+                  <button
+                    onClick={generatePrompt}
+                    disabled={isLoading}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transform active:scale-[0.98]"
+                  >
+                    {isLoading ? <Loader2 className="animate-spin w-6 h-6" /> : <><Wand2 size={24} /> 立即生成 Prompt</>}
+                  </button>
                 </div>
-                <button onClick={generatePrompt} disabled={isLoading} className="bg-[#2563eb] hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] justify-center shadow-lg shadow-blue-900/20">
-                  {isLoading ? <Loader2 className="animate-spin w-5 h-5" /> : <>生成 <ChevronRight size={16} /></>}
-                </button>
+
+                {isTagsOpen && (
+                  <div className="animate-in slide-in-from-top-2 duration-200">
+                    <div className="p-4 bg-slate-900/50 rounded-xl border border-slate-800 flex flex-wrap gap-2">
+                      {tags.map(tag => (
+                        <FeatureTag key={tag.id} label={tag.label} active={selectedTags.includes(tag.id)} onClick={() => toggleTag(tag.id)} />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
