@@ -69,14 +69,13 @@ AI models tend to be "too perfect". You MUST inject "Disturbance Tokens" to achi
 ### E. MIDJOURNEY (v6/v7) - Artistic & Stylized
 - **Focus:** Artistic composition, lighting, style fusion.
 - **Parameters:**
-  - `--v 6.0` / `--v 7`: Version control.
-  - `--s 250`: Stylize (0-1000). Higher = more artistic.
-  - `--w 50`: Weird (0-3000). Adds quirkiness.
-  - `--c 10`: Chaos (0-100). unexpected variation.
-  - `--ar 16: 9`: Aspect ratio.
+  - \`--v 6.0\` / \`--v 7\`: Version control.
+  - \`--s 250\`: Stylize (0-1000). Higher = more artistic.
+  - \`--w 50\`: Weird (0-3000). Adds quirkiness.
+  - \`--c 10\`: Chaos (0-100). unexpected variation.
+  - \`--ar 16:9\`: Aspect ratio.
 - **Prompt Structure:** [Subject] + [Environment] + [Lighting/Color] + [Art Style] + [Parameters].
 - **Key:** Use "–" (double hyphen) for parameters. Avoid "in the style of" if possible; just name the artist/style directly.
-
 
 ## 4. OUTPUT INSTRUCTION
 1.  **Thinking Process**: Analyze the request (do not output this).
