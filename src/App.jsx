@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { INITIAL_KNOWLEDGE_BASE, PDF_TAGS } from './knowledge';
 
 import {
   Camera,
@@ -20,49 +21,7 @@ import {
 } from 'lucide-react';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
-// --- 預設專家知識庫 (從您的 PDF 提取) ---
-const INITIAL_KNOWLEDGE_BASE = `
-# SYSTEM ROLE: EXPERT AI PROMPT DIRECTOR
-You are an advanced Prompt Engineer specializing in "Model-Specific" translation. You do not just translate languages; you translate "Intent" into "Technical Specification" based on the target generative model's architecture.
-
-## CORE VISUAL DICTIONARY (Universal):
-- **Lighting:** Rembrandt (Drama), Split (Mystery), Butterfly (Beauty), Global Illumination (Realism), Subsurface Scattering (Skin/Jade).
-- **Camera:** - 35mm: Documentary, Humanist, Environment included.
-  - 85mm: Portrait, Compression, Bokeh background.
-  - Macro: Tiny details, Shallow depth of field.
-  - Dutch Angle: Dynamic, Tension, Disorientation.
-  - Low Angle (Hero Shot): Power, Dominance.
-- **Robustness Breaking (Vital):** AI tends to be too perfect. Introduce "Disturbance Tokens": 
-  - Keywords: "Asymmetrical", "Messy hair", "Skin pores", "Vellus hair", "Dust particles", "Motion blur", "Film grain".
-  - Logic: "Perfect is fake; Imperfect is real."
-
-## MODEL SPECIFIC STRATEGIES (You must strictly adhere to these):
-
-### 1. FLUX.2 (The Architect) - Structure & Physics
-- **Format:** PREFER JSON STRUCTURE or Strict List.
-- **Logic:** Describes "What is there", NOT "What is not there".
-- **Key Tech:** Handles text rendering well. Needs physical description of materials.
-- **Style:** "Raw Photo", "Amateur Phone Photo" works better than "Masterpiece".
-- **Example Output:** { "Subject": "1960s Mustang", "Material": {"Paint": "Rusted red", "Texture": "Dusty"}, "Camera": {"Lens": "35mm", "Focus": "Sharp center"}, "Lighting": "Hard sunlight" }
-
-### 2. NANO BANANA / GEMINI (The Logician) - Reasoning
-- **Format:** Natural Language with Logic.
-- **Logic:** Uses Chain-of-Thought. Explain "Why".
-- **Negatives:** Do not use "No blur". Use "Ensure sharp focus throughout".
-- **Text:** Put text in quotes. 
-- **Example Output:** "Create a diagram of a cat. First, visualize the anatomy. Then, render the fur using X-ray style. The caption 'CAT' should be visible in bold sans-serif."
-
-### 3. SEEDREAM (The Commercial Director) - Aesthetics
-- **Format:** Reference-First.
-- **Focus:** Asian aesthetics, Commercial product photography, Consistency.
-- **Keywords:** "E-commerce quality", "Studio lighting", "Soft shadows".
-
-### 4. VIDEO MODELS (Runway/Kling) - Physics & Time
-- **Format:** [Subject Action] + [Environment Physics] + [Camera Movement].
-- **Physics:** Describe how things move (e.g., "Hair flowing in wind", "Water splashing").
-- **Camera:** Must include: "Slow Pan", "Dolly In", "Tracking Shot", "FPV".
-- **Example:** "A car driving in rain. Raindrops slide UP the windshield (physics). Camera tracks the car from the side (movement). Neon lights reflect on wet road."
-`;
+// --- 預設專家知識庫由 knowledge.js 導入 ---
 
 // --- UI 元件 ---
 
@@ -119,11 +78,16 @@ const App = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [knowledgeBase, setKnowledgeBase] = useState(() => localStorage.getItem("gemini_knowledge_base") || INITIAL_KNOWLEDGE_BASE);
+  const [knowledgeVersions, setKnowledgeVersions] = useState(() => JSON.parse(localStorage.getItem("gemini_kb_versions") || "[]"));
 
-  // Persist knowledge base
-  React.useEffect(() => {
+  // Persist knowledge base & versions
+  useEffect(() => {
     localStorage.setItem("gemini_knowledge_base", knowledgeBase);
   }, [knowledgeBase]);
+
+  useEffect(() => {
+    localStorage.setItem("gemini_kb_versions", JSON.stringify(knowledgeVersions));
+  }, [knowledgeVersions]);
 
   const handleResetKnowledge = () => {
     if (confirm("Are you sure you want to reset the knowledge base to default? All learned information will be lost.")) {
@@ -141,15 +105,7 @@ const App = () => {
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
 
-  const tags = [
-    { id: '35mm', label: '35mm 鏡頭 (人文)' },
-    { id: '85mm', label: '85mm 鏡頭 (人像)' },
-    { id: 'dutch', label: '荷蘭式角度' },
-    { id: 'rembrandt', label: '林布蘭光' },
-    { id: 'cyberpunk', label: '賽博龐克' },
-    { id: 'film_grain', label: '底片顆粒 (真實感)' },
-    { id: 'imperfection', label: '增加瑕疵' },
-  ];
+  const tags = PDF_TAGS;
 
   const toggleTag = (id) => {
     setSelectedTags(prev =>
@@ -196,12 +152,25 @@ const App = () => {
         const base64Data = reader.result.split(',')[1];
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-09-2025" });
+        const geminiModel = genAI.getGenerativeModel({
+          model: "gemini-2.0-flash-exp", // Uses flash experimental for speed/reasoning
+          generationConfig: { responseMimeType: "application/json" }
+        });
 
         const prompt = `
           TASK: EXTRACT KNOWLEDGE FOR SYSTEM PROMPT
           The user has uploaded a PDF containing expert knowledge about AI Prompt Engineering.
-          ACTION: Extract key terms and techniques. Output concise Markdown.
+          
+          ACTION: 
+          1. Extract key terms, techniques, and style modifiers.
+          2. Create a concise dictionary/instruction block suitable for appending to the system prompt.
+          3. summarize what was new in this PDF (max 2 sentences).
+          
+          OUTPUT JSON FORMAT:
+          {
+            "knowledge_block": "Markdown formatted technical knowledge extracted...",
+            "summary": "Brief summary of added concepts..."
+          }
         `;
 
         const result = await geminiModel.generateContent([
@@ -215,10 +184,28 @@ const App = () => {
         ]);
 
         const response = await result.response;
-        const newKnowledge = response.text();
+        const text = response.text();
 
-        setKnowledgeBase(prev => prev + "\n\n## [NEW] LEARNED KNOWLEDGE:\n" + newKnowledge);
-        alert("Knowledge Base Updated!");
+        try {
+          const data = JSON.parse(text);
+          const newKnowledge = data.knowledge_block;
+          const summary = data.summary;
+
+          setKnowledgeBase(prev => prev + "\n\n## [NEW] LEARNED FROM: " + file.name + "\n" + newKnowledge);
+
+          setKnowledgeVersions(prev => [{
+            id: Date.now(),
+            date: new Date().toLocaleString(),
+            fileName: file.name,
+            summary: summary
+          }, ...prev]);
+
+          alert(`Knowledge Base Updated! Added: ${summary}`);
+        } catch (e) {
+          // Fallback if JSON fails
+          setKnowledgeBase(prev => prev + "\n\n## [NEW] LEARNED FROM: " + file.name + "\n" + text);
+          alert("Knowledge Base Updated (Raw Text)!");
+        }
       };
       reader.readAsDataURL(file);
 
@@ -308,7 +295,14 @@ const App = () => {
           2. Identify: Focal length, Lighting type, Composition, Texture details, and Atmosphere.
           3. Convert this analysis into a highly optimized prompt specifically for the '${model.toUpperCase()}' model architecture.
           4. User additional notes: ${userQuery || "None"}
-          5. Selected Style Tags to Enforce: ${selectedTags.join(', ')}
+          5. Selected Style Tags to Enforce: ${selectedTags.map(id => tags.find(t => t.id === id)?.label || id).join(', ')}
+          
+          OUTPUT RULES:
+          - Output ONLY the Final Prompt (No thinking process).
+          - Provide output in format:
+            [CN] <Chinese Prompt>
+            [EN] <English Prompt>
+          - For 'SEEDREAM' model, strictly limit English prompt to 800 characters.
         `;
 
         requestParts = [
@@ -325,11 +319,18 @@ const App = () => {
           TASK: GENERATE OPTIMIZED PROMPT
           1. User Input: "${userQuery}"
           2. Target Model: ${model.toUpperCase()}
-          3. Selected Tags (Must include): ${selectedTags.join(', ')}
-          
+          3. Selected Tags (Must include): ${selectedTags.map(id => tags.find(t => t.id === id)?.label || id).join(', ')}
+
           PROCEDURE:
-          - First, "Thinking Process": Briefly analyze what the user wants vs. what the model needs. Explain what technical terms you are adding.
-          - Second, "Final Prompt": The exact prompt block to copy.
+          - Internal Thinking: Briefly analyze what the user wants vs. what the model needs.
+          - Output: ONLY the Final Prompt block.
+          
+          OUTPUT RULES:
+          - DO NOT show the thinking process.
+          - Provide output in format:
+            [CN] <Chinese Prompt>
+            [EN] <English Prompt>
+          - For 'SEEDREAM' model, strictly limit English prompt to 800 characters.
         `;
         requestParts = [{ text: promptText }];
       }
@@ -355,7 +356,7 @@ const App = () => {
       } else if (msg.includes("SAFETY")) {
         setErrorMsg("Safety Error: Content blocked.");
       } else {
-        setErrorMsg(`Error: ${msg}`);
+        setErrorMsg(`Error: ${msg} `);
       }
     } finally {
       setIsLoading(false);
@@ -419,7 +420,20 @@ const App = () => {
               </div>
             </div>
             <div className="p-6 flex-1 overflow-y-auto">
-              <textarea value={knowledgeBase} onChange={(e) => setKnowledgeBase(e.target.value)} className="w-full h-full min-h-[500px] bg-slate-950 border border-slate-700 rounded-lg p-4 font-mono text-xs text-emerald-500 leading-relaxed focus:ring-2 focus:ring-emerald-500 outline-none resize-none" />
+              <div className="mb-6 p-4 bg-slate-950/50 rounded-lg border border-slate-800">
+                <h4 className="text-sm font-bold text-slate-300 mb-2">更新紀錄 (Versions)</h4>
+                {knowledgeVersions.length === 0 ? <p className="text-slate-500 text-xs">尚無更新。</p> : (
+                  <ul className="space-y-2">
+                    {knowledgeVersions.map((v) => (
+                      <li key={v.id} className="text-xs border-l-2 border-emerald-500 pl-3">
+                        <div className="flex justify-between text-slate-400"><span>{v.fileName}</span> <span>{v.date}</span></div>
+                        <p className="text-slate-300 mt-1">{v.summary}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <textarea value={knowledgeBase} onChange={(e) => setKnowledgeBase(e.target.value)} className="w-full h-[400px] bg-slate-950 border border-slate-700 rounded-lg p-4 font-mono text-xs text-emerald-500 leading-relaxed focus:ring-2 focus:ring-emerald-500 outline-none resize-none" placeholder="Current Knowledge Base..." />
             </div>
           </div>
         </div>
@@ -427,7 +441,7 @@ const App = () => {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         <section className="mb-10">
-          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span> 第一步：選擇目標模型</h2>
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span> 第一步：選擇目標模型 (Target Model)</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <ModelCard id="flux" name="Flux.2" icon={Aperture} description="結構化，JSON 格式。架構師。" active={model === 'flux'} onClick={setModel} />
             <ModelCard id="gemini" name="Nano Banana" icon={Zap} description="邏輯，推理。邏輯學家。" active={model === 'gemini'} onClick={setModel} />
@@ -508,7 +522,7 @@ const App = () => {
         </section>
         <footer className="border-t border-slate-800 py-8 text-center text-slate-600 text-xs"><p>由 Google Gemini 2.5 Flash 驅動 • 針對 Flux.2, Seedream & Runway 優化</p></footer>
       </main>
-      <style>{`.custom-scrollbar::-webkit-scrollbar {width: 6px;} .custom-scrollbar::-webkit-scrollbar-track {background: rgba(30, 41, 59, 0.5);} .custom-scrollbar::-webkit-scrollbar-thumb {background: rgba(71, 85, 105, 0.8); border-radius: 4px;} .custom-scrollbar::-webkit-scrollbar-thumb:hover {background: rgba(100, 116, 139, 1);}`}</style>
+      <style>{`.custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); } .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.8); border-radius: 4px; } .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 1); }`}</style>
     </div>
   );
 };
