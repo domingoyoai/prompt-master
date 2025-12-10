@@ -103,7 +103,9 @@ const App = () => {
   const [copied, setCopied] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isLearning, setIsLearning] = useState(false);
+  const [isLearning, setIsLearning] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
@@ -117,23 +119,46 @@ const App = () => {
   };
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 20 * 1024 * 1024) {
-        alert("File size is too large. Please upload an image smaller than 20MB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUploadedImage({
-          file: file,
-          preview: reader.result,
-          base64: reader.result.split(',')[1]
-        });
-      };
-      reader.readAsDataURL(file);
-      setInputMode('image');
-      setErrorMsg('');
+    const file = e.target.files?.[0];
+    if (file) processImageFile(file);
+  };
+
+  const processImageFile = (file) => {
+    if (file.size > 20 * 1024 * 1024) {
+      alert("File size is too large. Please upload an image smaller than 20MB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUploadedImage({
+        file: file,
+        preview: reader.result,
+        base64: reader.result.split(',')[1]
+      });
+    };
+    reader.readAsDataURL(file);
+    setInputMode('image');
+    setErrorMsg('');
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processImageFile(file);
+    } else if (file) {
+      alert("Please upload an image file.");
     }
   };
 
@@ -293,14 +318,20 @@ const App = () => {
 
       if (inputMode === 'image') {
         promptText = `
-          TASK: REVERSE ENGINEER PROMPT
-          1. Analyze the uploaded image like a professional cinematographer.
-          2. Identify: Focal length, Lighting type, Composition, Texture details, and Atmosphere.
-          3. Convert this analysis into a highly optimized prompt specifically for the '${model.toUpperCase()}' model architecture.
-          4. User additional notes: ${userQuery || "None"}
-          5. Selected Style Tags to Enforce: ${selectedTags.map(id => tags.find(t => t.id === id)?.label || id).join(', ')}
+          TASK: REVERSE ENGINEER PROMPT (ROLE: EXPERT CINEMATOGRAPHER & PROMPT ENGINEER)
           
-          OUTPUT RULES:
+          IMAGE ANALYSIS:
+          1. **Subject**: Detailed description of the main subject.
+          2. **Camera**: Estimate Focal Length (e.g., 35mm, 85mm, 200mm), Angle (Low/High/Dutch), and Depth of Field.
+          3. **Lighting**: Identify specific lighting technique (Rembrandt, Butterfly, Split, Chiaroscuro, etc.) and source (Softbox, Natural, Neon).
+          4. **Atmosphere/Style**: Describe the mood, color palette (e.g., Cyberpunk, Pastel, Vintage), and texture (Film grain, Glossy).
+          
+          GENERATION ACTION:
+          - Convert this analysis into a highly optimized prompt specifically for the '${model.toUpperCase()}' model architecture.
+          - Incorporate these user constraints: "${userQuery || "No additional constraints"}"
+          - MUST enforce these tags: ${selectedTags.map(id => tags.find(t => t.id === id)?.label || id).join(', ')}
+          
+          OUTPUT RULES (STRICT):
           - Output ONLY the Final Prompt (No thinking process).
           - Provide output in format:
             [CN] <Chinese Prompt>
@@ -465,7 +496,16 @@ const App = () => {
 
             <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-1 relative overflow-hidden group focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
               {inputMode === 'image' ? (
-                <div className="p-8 text-center border-2 border-dashed border-slate-700 rounded-xl hover:bg-slate-800/50 transition-colors relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <div
+                  className={`p-8 text-center border-2 border-dashed rounded-xl transition-all relative cursor-pointer ${isDragging
+                      ? 'border-blue-500 bg-blue-500/10 scale-[1.02]'
+                      : 'border-slate-700 hover:bg-slate-800/50'
+                    }`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
                   <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
                   {uploadedImage ? (
                     <div className="relative">
@@ -475,9 +515,13 @@ const App = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="py-8">
-                      <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-400"><Upload size={32} /></div>
-                      <h4 className="text-lg font-medium text-slate-300">將圖片拖放到這裡</h4>
+                    <div className="py-8 pointer-events-none">
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors ${isDragging ? 'bg-blue-500 text-white' : 'bg-slate-800 text-blue-400'}`}>
+                        <Upload size={32} />
+                      </div>
+                      <h4 className={`text-lg font-medium transition-colors ${isDragging ? 'text-blue-400' : 'text-slate-300'}`}>
+                        {isDragging ? '放開以已上傳' : '將圖片拖放到這裡'}
+                      </h4>
                       <p className="text-slate-500 mt-2 text-sm">AI 將分析光線、角度和風格。</p>
                     </div>
                   )}
