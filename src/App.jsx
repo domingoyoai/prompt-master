@@ -19,7 +19,9 @@ import {
   AlertCircle,
   Plus,
   SlidersHorizontal,
-  Wand2
+  Wand2,
+  Banana,
+  Palette
 } from 'lucide-react';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
@@ -477,7 +479,8 @@ const App = () => {
           <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span> 第一步：選擇目標模型 (Target Model)</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <ModelCard id="flux" name="Flux.2" icon={Aperture} description="結構化，JSON 格式。架構師。" active={model === 'flux'} onClick={setModel} />
-            <ModelCard id="gemini" name="Nano Banana" icon={Zap} description="邏輯，推理。邏輯學家。" active={model === 'gemini'} onClick={setModel} />
+            <ModelCard id="midjourney" name="Midjourney" icon={Palette} description="藝術，風格化。藝術家。" active={model === 'midjourney'} onClick={setModel} />
+            <ModelCard id="gemini" name="Nano Banana" icon={Banana} description="邏輯，推理。邏輯學家。" active={model === 'gemini'} onClick={setModel} />
             <ModelCard id="seedream" name="Seedream" icon={Camera} description="商業，參考圖優先。導演。" active={model === 'seedream'} onClick={setModel} />
             <ModelCard id="video" name="Video Model" icon={Film} description="物理，時間。攝影師。" active={model === 'video'} onClick={setModel} />
           </div>

@@ -66,6 +66,18 @@ AI models tend to be "too perfect". You MUST inject "Disturbance Tokens" to achi
 - **Formatting:** [Camera Move] + [Subject Action] + [Environment Physics].
 - **Key:** Describe movement (Pan, Tilt, Zoom, Truck).
 
+### E. MIDJOURNEY (v6/v7) - Artistic & Stylized
+- **Focus:** Artistic composition, lighting, style fusion.
+- **Parameters:**
+  - `--v 6.0` / `--v 7`: Version control.
+  - `--s 250`: Stylize (0-1000). Higher = more artistic.
+  - `--w 50`: Weird (0-3000). Adds quirkiness.
+  - `--c 10`: Chaos (0-100). unexpected variation.
+  - `--ar 16: 9`: Aspect ratio.
+- **Prompt Structure:** [Subject] + [Environment] + [Lighting/Color] + [Art Style] + [Parameters].
+- **Key:** Use "–" (double hyphen) for parameters. Avoid "in the style of" if possible; just name the artist/style directly.
+
+
 ## 4. OUTPUT INSTRUCTION
 1.  **Thinking Process**: Analyze the request (do not output this).
 2.  **Final Prompt (Bilingual)**: Provide the optimized prompt in ONE block containing BOTH Chinese and English versions. 
@@ -76,17 +88,17 @@ AI models tend to be "too perfect". You MUST inject "Disturbance Tokens" to achi
 `;
 
 export const PDF_TAGS = [
-    { id: '35mm', label: '35mm (人文)' },
-    { id: '85mm', label: '85mm (人像)' },
-    { id: 'fisheye', label: '魚眼 (Fisheye)' },
-    { id: 'low_angle', label: '仰視 (Heroic)' },
-    { id: 'dutch', label: '荷蘭式 (Tension)' },
-    { id: 'rembrandt', label: '林布蘭光' },
-    { id: 'volumetric', label: '丁達爾光 (God Rays)' },
-    { id: 'cyberpunk', label: '賽博龐克' },
-    { id: 'y2k', label: 'Y2K 風格' },
-    { id: 'wes_anderson', label: '韋斯安德森' },
-    { id: 'film_grain', label: '底片顆粒 (Realism)' },
-    { id: 'robustness', label: '魯棒性破壞 (Imperfection)' },
-    { id: 'cut_words', label: '剪詞 (Negative Space)' },
+  { id: '35mm', label: '35mm (人文)' },
+  { id: '85mm', label: '85mm (人像)' },
+  { id: 'fisheye', label: '魚眼 (Fisheye)' },
+  { id: 'low_angle', label: '仰視 (Heroic)' },
+  { id: 'dutch', label: '荷蘭式 (Tension)' },
+  { id: 'rembrandt', label: '林布蘭光' },
+  { id: 'volumetric', label: '丁達爾光 (God Rays)' },
+  { id: 'cyberpunk', label: '賽博龐克' },
+  { id: 'y2k', label: 'Y2K 風格' },
+  { id: 'wes_anderson', label: '韋斯安德森' },
+  { id: 'film_grain', label: '底片顆粒 (Realism)' },
+  { id: 'robustness', label: '魯棒性破壞 (Imperfection)' },
+  { id: 'cut_words', label: '剪詞 (Negative Space)' },
 ];
