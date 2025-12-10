@@ -512,12 +512,9 @@ const App = () => {
           <div className="w-full space-y-6">
             <div className="flex justify-between items-end">
               <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-purple-500"></span> 第二步：您的構想</h2>
-              <div className="flex justify-between items-end">
-                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-purple-500"></span> 第二步：您的構想</h2>
-                <div className="flex gap-2">
-                  <button onClick={() => { setInputMode('text'); setUploadedImage(null); }} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'text' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>文字模式</button>
-                  <button onClick={() => { setInputMode('image'); setUserQuery(''); }} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'image' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>圖片反推</button>
-                </div>
+              <div className="flex gap-2">
+                <button onClick={() => { setInputMode('text'); setUploadedImage(null); }} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'text' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>文字模式</button>
+                <button onClick={() => { setInputMode('image'); setUserQuery(''); }} className={`text-xs px-3 py-1 rounded-md ${inputMode === 'image' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-white'}`}>圖片反推</button>
               </div>
             </div>
 
