@@ -17,7 +17,6 @@ import {
   Check,
   Settings,
   AlertCircle,
-  AlertCircle,
   Plus,
   SlidersHorizontal,
   Wand2
@@ -102,7 +101,6 @@ const App = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isLearning, setIsLearning] = useState(false);
   const [isTagsOpen, setIsTagsOpen] = useState(false);
